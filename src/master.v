@@ -23,7 +23,7 @@ reg [7:0] data;    // data to send
 
 reg [7:0] count;
 
-always @(posedge clk) begin
+always @(negedge clk) begin
 	if (reset == 1) begin
 		i2c_scl <= 1;
 	end
