@@ -25,6 +25,22 @@ reg [7:0] count;
 
 always @(posedge clk) begin
 	if (reset == 1) begin
+		i2c_scl <= 1;
+	end
+	else begin
+
+		if ((state == STATE_IDLE) || (state == STATE_START) || (state == STATE_STOP)) begin
+			i2c_scl <= 1;
+		end
+		else begin
+			i2c_scl <= ~i2c_scl;
+		end
+
+	end
+end
+
+always @(posedge clk) begin
+	if (reset == 1) begin
 		state <= 0;
 		i2c_sda <= 1;
 		i2c_scl <= 1;
@@ -43,7 +59,7 @@ always @(posedge clk) begin
 			end
 
 			STATE_START: begin // start
-				i2c_sda <= 1;
+				i2c_sda <= 0;
 				state <= STATE_ADDR;
 				count <= 6; // for sending 7 bits of address in next state
 			end
