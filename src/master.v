@@ -5,7 +5,7 @@ module master (
 	input wire reset,
 
 	output reg i2c_sda,
-	output reg i2c_scl
+	output wire i2c_scl
 );
 
 localparam STATE_IDLE = 0;
@@ -23,17 +23,21 @@ reg [7:0] data;    // data to send
 
 reg [7:0] count;
 
+reg i2c_scl_enable = 0;
+
+assign i2c_scl = (i2c_scl_enable == 0) ? 1 : ~clk;
+
 always @(negedge clk) begin
 	if (reset == 1) begin
-		i2c_scl <= 1;
+		i2c_scl_enable <= 0;
 	end
 	else begin
 
 		if ((state == STATE_IDLE) || (state == STATE_START) || (state == STATE_STOP)) begin
-			i2c_scl <= 1;
+			i2c_scl_enable <= 0;
 		end
 		else begin
-			i2c_scl <= ~i2c_scl;
+			i2c_scl_enable <= 1;
 		end
 
 	end
@@ -43,7 +47,6 @@ always @(posedge clk) begin
 	if (reset == 1) begin
 		state <= 0;
 		i2c_sda <= 1;
-		i2c_scl <= 1;
 
 		address = 7'h50;
 		data = 8'haa;
