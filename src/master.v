@@ -68,13 +68,13 @@ always @(posedge clk) begin
 			end
 
 			STATE_ADDR: begin // msb of address
-				i2c_sda <= address[count];
+				#(0.5) i2c_sda <= address[count];
 				if (count == 0) state <= STATE_RW;
 				else count <= count - 1;
 			end
 			
 			STATE_RW: begin 
-				i2c_sda <= 1; // write
+				#(0.5) i2c_sda <= 1; // write
 				state <= STATE_WAIT_ACK;
 			end
 
@@ -87,7 +87,7 @@ always @(posedge clk) begin
 			end
 
 			STATE_DATA: begin
-				i2c_sda <= data[count];
+				#(0.5) i2c_sda <= data[count];
 				if (count == 0) state <= STATE_WAIT_ACK2;
 				else count <= count - 1;
 			end
